@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <iomanip>
 #include "City.h"
 #include "Tour.h"
 
@@ -35,6 +36,8 @@ int main()
 	srand(time(NULL));
 	vector<City*> cities_to_visit;
 	vector<Tour*> population;
+	vector<Tour*> temporary_tour;
+
 
 	for (int i = 0; i < CITIES_IN_TOUR; i++)
 	{
@@ -67,6 +70,38 @@ int main()
 	distance from our initial random population of size POPULATION_SIZE */
 	best_distance = FITNESS_SCALER / (population[index_of_shortest_tour])->fitness;
 	printf("Shortest distance in initial population: %8.3f\n", best_distance);
+	cout << "Shortest distance in initial population: " << fixed << setprecision(3) << best_distance << endl;
+
+
+
+
+	/* And now we loop until we find what we want--the population "evolves"!
+	We can loop a certain number of times like:
+	for (iterations = 0; iterations < ITERATIONS; ++iterations) { ... }
+
+	OR
+
+	We can loop until we observe a predetermined improvement:
+	while ( best_distance / base_distance > improvement_factor) { ... } */
+	for (iterations = 0; iterations < ITERATIONS; ++iterations) {
+
+		/* 1. Selection: keep the best route by moving the fittest to the front of
+		the population.  We won't  change it in this iteration, and we will
+		call it an 'elite' individual) */
+		if (index_of_shortest_tour != 0) {
+			temporary_tour = population;
+			population[0] = population[index_of_shortest_tour];
+			population[index_of_shortest_tour] = temporary_tour[0];
+		}
+
+
+
+	}
+
+
+
+
+
 
 	system("pause");
 	return 0;
