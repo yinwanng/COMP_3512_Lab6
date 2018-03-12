@@ -39,6 +39,20 @@ int main()
 		cout << cities_to_visit[i]->get_Y() << endl;
 	}
 
+	
+
+
+		/* Populates and then randomly shuffles the CITIES_IN_TOUR cities in
+	each candidate tour of our population of POPULATION_SIZE routes (tours).  */
+	for (unsigned int i = 0; i < POPULATION_SIZE; ++i) {
+		for (unsigned int j = 0; j < CITIES_IN_TOUR; ++j) {
+			population.push_back(new Tour(0.0));
+			population[i]->setPermutation(cities_to_visit);
+		}
+		// ...and then randomly shuffles them.
+		shuffle_cities(population[i]->permutation); // Randomizes order of cities in this tour
+	}
+
 
 	system("pause");
 	return 0;

@@ -9,6 +9,7 @@ public:
 	void setFitness(double);
 	double getFitness() const;
 	std::vector<City*> getPermutation() const;
+	void setPermutation(std::vector<City*> permutation);
 
 //private:
 	double fitness;
