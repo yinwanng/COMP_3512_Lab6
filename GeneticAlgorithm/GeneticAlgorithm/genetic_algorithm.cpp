@@ -155,3 +155,16 @@ double get_tour_distance(Tour *city_list)
 	return distance;
 }
 
+/*
+* Returns the distance between the two specified cities.
+* PARAM:  a struct city
+* PARAM:  a struct city
+* PRE:    NULL
+* POST:   NULL
+* RETURN: the total distance, a double
+*/
+double get_distance_between_cities(City *a, City *b)
+{
+	return sqrt(pow((double)(a->get_X() - b->get_X()), 2.0) +
+		pow((double)(a->get_Y() - b->get_Y()), 2.0));
+}
