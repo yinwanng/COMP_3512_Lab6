@@ -63,6 +63,10 @@ int main()
 	determine_fitness function returns the index of the fittest individual. */
 	index_of_shortest_tour = determine_fitness(population, POPULATION_SIZE);
 
+	/* Sets the base distance.  This is our starting point. We'll use the best
+	distance from our initial random population of size POPULATION_SIZE */
+	best_distance = FITNESS_SCALER / (population[index_of_shortest_tour])->fitness;
+	printf("Shortest distance in initial population: %8.3f\n", best_distance);
 
 	system("pause");
 	return 0;
