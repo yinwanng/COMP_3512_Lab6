@@ -58,3 +58,40 @@ int main()
 	return 0;
 }
 
+/*
+* Shuffles the cities in an array (tour) of cities
+* PARAM:  tour contains a set of CITIES_IN_TOUR cities
+* PRE:    NULL
+* POST:   the cities in tour have been shuffled
+* RETURN: VOID
+*/
+void shuffle_cities(vector<City*> &permutation)
+{
+	int i = 0, index_one = 0, index_two = 0;
+	for (i = 0; i < SHUFFLES; ++i) {
+		index_one = rand() % CITIES_IN_TOUR;
+		index_two = rand() % CITIES_IN_TOUR;
+
+		swap_cities(index_one, index_two, permutation);
+	}
+	return;
+}
+
+/*
+* Swaps the cities at the specified indices in the
+* specified array (tour) of cities.
+* PARAM:  int index
+* PARAM:  int index
+* PARAM:  pointer to an array of struct city
+* PRE:    both indices >= 0
+* PRE :   both indices < CITIES_IN_TOUR
+* POST:   the cities at the specified indices in the
+*         specified tour have been swapped.
+*/
+
+void swap_cities(int index_one, int index_two, vector<City*> &permutation)
+{
+	swap(permutation[index_one], permutation[index_two]);
+	return;
+}
+
