@@ -24,7 +24,20 @@ void swap_cities(int index_one, int index_two, vector<City*> &permutation);
 int main()
 {
 	srand(time(NULL));
+	vector<City*> cities_to_visit;
+	vector<Tour*> population;
 
+	for (int i = 0; i < CITIES_IN_TOUR; i++)
+	{
+		cities_to_visit.push_back(new City((char)(i + ASCII_OFFSET)));
+	}
+
+	for (int i = 0; i < CITIES_IN_TOUR; i++)
+	{
+		cout << cities_to_visit[i]->getName() << " ";
+		cout << cities_to_visit[i]->get_X() << " ";
+		cout << cities_to_visit[i]->get_Y() << endl;
+	}
 
 
 	system("pause");
