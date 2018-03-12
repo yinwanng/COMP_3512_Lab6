@@ -18,6 +18,15 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="City.cpp" />
+    <ClCompile Include="genetic_algorithm.cpp" />
+    <ClCompile Include="Tour.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="City.h" />
+    <ClInclude Include="Tour.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{C9B46743-D378-40B5-BD15-C83DB7A3330F}</ProjectGuid>
@@ -114,8 +123,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
