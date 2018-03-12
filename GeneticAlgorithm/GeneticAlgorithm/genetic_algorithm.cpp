@@ -20,9 +20,16 @@
 using namespace std;
 void shuffle_cities(vector<City*> &permutation);
 void swap_cities(int index_one, int index_two, vector<City*> &permutation);
-
+int determine_fitness(vector<Tour*> population, int population_size);
 int main()
 {
+	/* Variables */
+	int    i = 0, j = 0, iterations = 0;
+	int    index_of_shortest_tour = 0;
+	double best_distance = 0.0;
+	double best_iteration_distance = 0.0;
+	double improvement_factor = 0.3;
+
 	srand(time(NULL));
 	vector<City*> cities_to_visit;
 	vector<Tour*> population;
@@ -39,9 +46,6 @@ int main()
 		cout << cities_to_visit[i]->get_Y() << endl;
 	}
 
-	
-
-
 		/* Populates and then randomly shuffles the CITIES_IN_TOUR cities in
 	each candidate tour of our population of POPULATION_SIZE routes (tours).  */
 	for (unsigned int i = 0; i < POPULATION_SIZE; ++i) {
@@ -52,6 +56,10 @@ int main()
 		// ...and then randomly shuffles them.
 		shuffle_cities(population[i]->permutation); // Randomizes order of cities in this tour
 	}
+
+	/* Determines the fitness of each tour, and notes which tour is the fittest.  The
+	determine_fitness function returns the index of the fittest individual. */
+	index_of_shortest_tour = determine_fitness(population, POPULATION_SIZE);
 
 
 	system("pause");
@@ -95,3 +103,31 @@ void swap_cities(int index_one, int index_two, vector<City*> &permutation)
 	return;
 }
 
+/*
+* Calculates the fitness of each tour in the specifed population
+* and stores it in its struct.  Also determines which tour has
+* the best fitness.
+* PARAM:  population an array of struct tour
+* PARAM:  population_size of the array
+* PRE:    population_size is the length of population
+* POST:   the struct tour elements in the population array have
+*         been updated with their correct fitness ratings
+* RETURN: the index of the 'fittest' tour in the population array
+*/
+int determine_fitness(vector<Tour*> population, int population_size)
+{
+	int i = 0, index_of_shortest_tour = 0;
+	double shortest_tour_in_population = (double)RAND_MAX; // Begin by assuming distance is enormous
+	double candidate_distance = 0.0;
+
+	for (i = 0; i < population_size; ++i) {
+		candidate_distance = get_tour_distance(population[i]);
+		//population[i].fitness = FITNESS_SCALER / candidate_distance;
+		population[i]->setFitness(FITNESS_SCALER / candidate_distance);
+		if (candidate_distance <= shortest_tour_in_population) {
+			index_of_shortest_tour = i;
+			shortest_tour_in_population = candidate_distance;
+		}
+	}
+	return index_of_shortest_tour;
+}
