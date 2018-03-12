@@ -21,6 +21,8 @@ using namespace std;
 void shuffle_cities(vector<City*> &permutation);
 void swap_cities(int index_one, int index_two, vector<City*> &permutation);
 int determine_fitness(vector<Tour*> population, int population_size);
+double get_tour_distance(Tour *city_list);
+double get_distance_between_cities(City *a, City *b);
 int main()
 {
 	/* Variables */
@@ -103,6 +105,7 @@ void swap_cities(int index_one, int index_two, vector<City*> &permutation)
 	return;
 }
 
+
 /*
 * Calculates the fitness of each tour in the specifed population
 * and stores it in its struct.  Also determines which tour has
@@ -131,3 +134,24 @@ int determine_fitness(vector<Tour*> population, int population_size)
 	}
 	return index_of_shortest_tour;
 }
+
+/*
+* Returns the total distance traveled on the
+* specified array (tour) of cities.
+* PARAM:  tour contains a set of CITIES_IN_TOUR cities
+* PRE:    NULL
+* POST:   NULL
+* RETURN: the total distance, a double
+*/
+double get_tour_distance(Tour *city_list)
+{
+	int i = 0;
+	double distance = 0.0;
+	for (i = 0; i < CITIES_IN_TOUR; ++i) {
+		distance +=
+			get_distance_between_cities                         // so we create a loop
+			(city_list->permutation[i], city_list->permutation[(i + 1) % CITIES_IN_TOUR]);
+	}
+	return distance;
+}
+
