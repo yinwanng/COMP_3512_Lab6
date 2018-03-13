@@ -24,6 +24,9 @@ void swap_cities(int index_one, int index_two, vector<City*> &permutation);
 int determine_fitness(vector<Tour*> population, int population_size);
 double get_tour_distance(Tour *city_list);
 double get_distance_between_cities(City *a, City *b);
+
+vector<Tour*> select_parents(vector<Tour*> population);
+Tour * crossover(vector<Tour*> parents);
 int main()
 {
 	/* Variables */
@@ -37,6 +40,11 @@ int main()
 	vector<City*> cities_to_visit;
 	vector<Tour*> population;
 	vector<Tour*> temporary_tour;
+	vector<Tour*> crosses;
+	vector<Tour*> parents;
+	//vector<Tour*> child;
+	Tour * child;
+
 
 
 	for (int i = 0; i < CITIES_IN_TOUR; i++)
@@ -94,7 +102,20 @@ int main()
 			population[index_of_shortest_tour] = temporary_tour[0];
 		}
 
-
+		/* 2. Crossover (mix the rest of the routes and create new routes).  First
+		we create a separate collection of POPULATION_SIZE - 1.  We store this
+		in one of our utility buffers.  We choose parents by selecting the
+		fittest tour from PARENT_POOL_SIZE randomly selected tours.  We do
+		this NUMBER_OF_PARENTS times.  We cross the NUMBER_OF_PARENTS parents
+		and store the result in our utility buffer
+		*/
+		for (j = 0; j < (POPULATION_SIZE - NUMBER_OF_ELITES); ++j) {
+			parents = select_parents(population);
+			child = crossover(parents);
+			crosses[j] = child;
+			//child.clear();
+			parents.clear();
+		}
 
 	}
 
@@ -206,4 +227,101 @@ double get_distance_between_cities(City *a, City *b)
 {
 	return sqrt(pow((double)(a->get_X() - b->get_X()), 2.0) +
 		pow((double)(a->get_Y() - b->get_Y()), 2.0));
+}
+
+/*
+* Selects NUMBER_OF_PARENTS parent tours.  Each parent
+* is fittest of a subset of size PARENT_POOL_SIZE of the
+* population, randomly selected,.
+* PARAM:  pointer to a population of struct tour
+* PRE:    PARENT_POOL_SIZE > POPULATION_SIZE
+* POST:   NULL
+* RETURN: pointer to a struct tour which points to
+*/
+vector<Tour*> select_parents(vector<Tour*> population)
+{
+	int i = 0, j = 0, k = 0, parent_index = 0;
+
+	/* Chooses the best from PARENT_POOL randomly selected tours */
+	//struct tour * parents = (struct tour *) malloc(sizeof(struct tour) * NUMBER_OF_PARENTS);
+	//struct tour * parent_pool = (struct tour *) malloc(sizeof(struct tour) * PARENT_POOL_SIZE);
+	vector<Tour*> parents;
+	vector<Tour*> parent_pool;
+	
+
+
+	for (i = 0; i < NUMBER_OF_PARENTS; ++i) {
+		for (j = 0; j < PARENT_POOL_SIZE; ++j) {
+			k = rand() % POPULATION_SIZE;
+			(parent_pool[j]) = population[k];
+		}
+		parent_index = determine_fitness(parent_pool, PARENT_POOL_SIZE);
+		parents[i] = parent_pool[parent_index];
+	}
+	//free(parent_pool);
+	parent_pool.clear();
+	return parents;
+
+}
+
+/*
+* Mixes the contents of the NUMBER_OF_PARENTS tours pointed to by
+* the parents pointer, and returns a pointer to the mixture.
+*
+* How are we mixing them?  Not very well, yet.  This method has
+* been hard-coded for 2 parents.  Can you see how we can extend the
+* code to incorporate cities from > 2 parents?  Do we need any
+* preconditions (i.e. NUMBER_OF_PARENTS < POPULATION )?
+*
+* We select a random index and use the cities from one parent
+* to populate the mixed tour up to and including that index, and then
+* the cities from the second parent to top up the tour, making sure we
+* don't add cities that are already in the mixed tour.
+*
+* Can you think of ways to improve the way we cross the 'parents'?
+*
+* PARAM:  parents, a pointer to a struct tour
+* PRE:    parents is a valid pointer to NUMBER_OF_PARENTS struct tours
+* RETURN: a pointer to a struct tour combination of the parents
+*/
+Tour * crossover(vector<Tour*> parents)
+{
+	/* Variables */
+	int i = 0;
+
+	//struct tour * child = (struct tour *) malloc(sizeof(struct tour));
+	//vector<Tour*> child;
+	//child.push_back(new Tour(0.0));
+	Tour *child = new Tour(0.0);
+
+	/* Here's how we use rand again.  We invoke the rand() function, and since
+	we want the result to be between 0 and (CITIES_IN_TOUR - 1), we use the
+	modulus operator */
+	int boundary_index = rand() % CITIES_IN_TOUR;
+
+	/* Sets the index of the mixed result to 0.0 */
+	//child->fitness = 0.0;
+
+	/* Copies the first 'boundary_index' cities in order from parent 1 to the mixed
+	result */
+	for (i = 0; i < boundary_index; i++) {
+		child->permutation[i] = parents[i]->permutation[i];
+	}
+
+	/* Fills the rest of the cells with cities from parent 2 */
+	while (boundary_index < CITIES_IN_TOUR) {
+		for (i = 0; i < CITIES_IN_TOUR; ++i) {
+			/* If the mixed tour doesn't already contain the city at that index in parent two... */
+			if (!contains_city(child, boundary_index, &((parents[1])->permutation[i]))) {
+
+				/* ...then we add it from the second parent to the child... */
+				child->permutation[boundary_index] = (parents[1])->permutation[i];
+
+				/* And increment the boundary_index */
+				boundary_index++;
+			}
+		}
+	}
+
+	return child;
 }
