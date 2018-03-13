@@ -30,6 +30,7 @@ Tour * crossover(vector<Tour*> parents);
 
 Tour * crossover(vector<Tour*> parents);
 int contains_city(Tour * candidate_tour, int length, City * candidate_city);
+void mutate(vector<Tour*> population);
 int main()
 {
 	/* Variables */
@@ -80,7 +81,7 @@ int main()
 	/* Sets the base distance.  This is our starting point. We'll use the best
 	distance from our initial random population of size POPULATION_SIZE */
 	best_distance = FITNESS_SCALER / (population[index_of_shortest_tour])->fitness;
-	printf("Shortest distance in initial population: %8.3f\n", best_distance);
+	//printf("Shortest distance in initial population: %8.3f\n", best_distance);
 	cout << "Shortest distance in initial population: " << fixed << setprecision(3) << best_distance << endl;
 
 
@@ -120,8 +121,27 @@ int main()
 			parents.clear();
 		}
 
+		/* 3. Mutation (randomly mess a few up. excluding the elite tour[s]) */
+		mutate(population);
+
+		/* 4. Evaluation (assign each one a fitness aka FITNESS_SCALER * the inverse
+		of the total distance traveled) */
+		index_of_shortest_tour = determine_fitness(population, POPULATION_SIZE);
+
+		/* At the end of this iteration, if we have made it further to our goal,
+		we print some helpful information to standard output, and keep track */
+		best_iteration_distance = get_tour_distance(population[index_of_shortest_tour]);
+		if (best_iteration_distance < best_distance) {
+			best_distance = best_iteration_distance;
+			//printf("New distance: %8.3f\n", best_iteration_distance);
+			cout << "New distance: " << best_distance << endl;
+		}
 	}
 
+	/* Prints summary information */
+	//printf("Shortest distance %8.3f\n",(FITNESS_SCALER / population[index_of_shortest_tour]->getFitness()));
+
+	cout << "Shortest distance : " << FITNESS_SCALER / population[index_of_shortest_tour]->getFitness() << endl;
 
 
 
@@ -355,4 +375,36 @@ int contains_city(Tour * candidate_tour, int length, City * candidate_city)
 		}
 	}
 	return 0;
+}
+
+/*
+* Mutates the tour at the specified index of tours.
+*
+* Calculates a random mutation value for each city in the
+* specified tour.  If this value < MUTATION_RATE, then the
+* city is swapped with a randomly chosen city from the
+* same array (tour).
+*
+* There could be better ways to mutate a tour of cities.
+* Can you think of any?
+*
+* PARAM:  permutation, an array of struct tour
+* PARAM:  int index
+* PRE:    index is a valid index for permutation
+* POST:   some of population's tours may have been mutated.
+* RETURN: VOID
+*/
+void mutate(vector<Tour*> population)
+{
+	int i = 0, j = 0, k = 0;
+	double mutates = 0.0;
+	for (i = 0 + NUMBER_OF_ELITES; i < POPULATION_SIZE; ++i) {
+		for (j = 0; j < CITIES_IN_TOUR; ++j) {
+			mutates = (double)rand() / (double)RAND_MAX;
+			if (mutates <= MUTATION_RATE) {
+				k = rand() % CITIES_IN_TOUR;
+				swap_cities(j, k, (population[i])->permutation);
+			}
+		}
+	}
 }
