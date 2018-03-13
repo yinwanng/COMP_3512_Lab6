@@ -8,7 +8,6 @@
 
 #define POPULATION_SIZE 30
 #define CITIES_IN_TOUR  20
-
 #define SHUFFLES          32     
 #define ASCII_OFFSET      65     
 #define ITERATIONS        1000   
@@ -19,49 +18,47 @@
 #define NUMBER_OF_ELITES  1     
 
 using namespace std;
+
 void shuffle_cities(vector<City*> &permutation);
 void swap_cities(int index_one, int index_two, vector<City*> &permutation);
 int determine_fitness(vector<Tour*> population, int population_size);
 double get_tour_distance(Tour *city_list);
 double get_distance_between_cities(City *a, City *b);
-
 vector<Tour*> select_parents(vector<Tour*> population);
 Tour * crossover(vector<Tour*> parents);
-
 Tour * crossover(vector<Tour*> parents);
 int contains_city(Tour * candidate_tour, int length, City * candidate_city);
 void mutate(vector<Tour*> population);
+
 int main()
 {
+	srand(time(NULL));
 	/* Variables */
 	int    i = 0, j = 0, iterations = 0;
 	int    index_of_shortest_tour = 0;
 	double best_distance = 0.0;
 	double best_iteration_distance = 0.0;
 	double improvement_factor = 0.3;
-
-	srand(time(NULL));
 	vector<City*> cities_to_visit;
 	vector<Tour*> population;
 	vector<Tour*> temporary_tour;
 	vector<Tour*> crosses;
 	vector<Tour*> parents;
-	//vector<Tour*> child;
 	Tour * child;
-
-
 
 	for (int i = 0; i < CITIES_IN_TOUR; i++)
 	{
 		cities_to_visit.push_back(new City((char)(i + ASCII_OFFSET)));
 	}
 
+	/* Testing purposes
 	for (int i = 0; i < CITIES_IN_TOUR; i++)
 	{
 		cout << cities_to_visit[i]->getName() << " ";
 		cout << cities_to_visit[i]->get_X() << " ";
 		cout << cities_to_visit[i]->get_Y() << endl;
 	}
+	*/
 
 		/* Populates and then randomly shuffles the CITIES_IN_TOUR cities in
 	each candidate tour of our population of POPULATION_SIZE routes (tours).  */
@@ -81,11 +78,8 @@ int main()
 	/* Sets the base distance.  This is our starting point. We'll use the best
 	distance from our initial random population of size POPULATION_SIZE */
 	best_distance = FITNESS_SCALER / (population[index_of_shortest_tour])->fitness;
-	//printf("Shortest distance in initial population: %8.3f\n", best_distance);
+
 	cout << "Shortest distance in initial population: " << fixed << setprecision(3) << best_distance << endl;
-
-
-
 
 	/* And now we loop until we find what we want--the population "evolves"!
 	We can loop a certain number of times like:
@@ -116,8 +110,6 @@ int main()
 		for (j = 0; j < (POPULATION_SIZE - NUMBER_OF_ELITES); ++j) {
 			parents = select_parents(population);
 			child = crossover(parents);
-			//crosses[j] = child;
-			//child.clear();
 			parents.clear();
 		}
 
@@ -133,20 +125,19 @@ int main()
 		best_iteration_distance = get_tour_distance(population[index_of_shortest_tour]);
 		if (best_iteration_distance < best_distance) {
 			best_distance = best_iteration_distance;
-			//printf("New distance: %8.3f\n", best_iteration_distance);
 			cout << "New distance: " << best_distance << endl;
 		}
 	}
 
 	/* Prints summary information */
-	//printf("Shortest distance %8.3f\n",(FITNESS_SCALER / population[index_of_shortest_tour]->getFitness()));
-
 	cout << "Shortest distance : " << FITNESS_SCALER / population[index_of_shortest_tour]->getFitness() << endl;
 
-
-
-
-
+    cities_to_visit.clear();
+    population.clear();
+	temporary_tour.clear();
+    crosses.clear();
+	parents.clear();
+	
 	system("pause");
 	return 0;
 }
@@ -208,7 +199,6 @@ int determine_fitness(vector<Tour*> population, int population_size)
 
 	for (i = 0; i < population_size; ++i) {
 		candidate_distance = get_tour_distance(population[i]);
-		//population[i].fitness = FITNESS_SCALER / candidate_distance;
 		population[i]->setFitness(FITNESS_SCALER / candidate_distance);
 		if (candidate_distance <= shortest_tour_in_population) {
 			index_of_shortest_tour = i;
@@ -266,21 +256,14 @@ vector<Tour*> select_parents(vector<Tour*> population)
 	int i = 0, j = 0, k = 0, parent_index = 0;
 
 	/* Chooses the best from PARENT_POOL randomly selected tours */
-	//struct tour * parents = (struct tour *) malloc(sizeof(struct tour) * NUMBER_OF_PARENTS);
-	//struct tour * parent_pool = (struct tour *) malloc(sizeof(struct tour) * PARENT_POOL_SIZE);
 	vector<Tour*> parents;
 	vector<Tour*> parent_pool;
-
-
-
 	for (i = 0; i < NUMBER_OF_PARENTS; ++i) {
 		for (j = 0; j < PARENT_POOL_SIZE; ++j) {
 			k = rand() % POPULATION_SIZE;
-			//parent_pool[j] = population[k];
 			parent_pool.push_back(population[k]);
 		}
 		parent_index = determine_fitness(parent_pool, PARENT_POOL_SIZE);
-		//parents[i] = parent_pool[parent_index];
 		parents.push_back(parent_pool[parent_index]);
 	}
 	//free(parent_pool);
@@ -314,9 +297,6 @@ Tour * crossover(vector<Tour*> parents)
 	/* Variables */
 	int i = 0;
 
-	//struct tour * child = (struct tour *) malloc(sizeof(struct tour));
-	//vector<Tour*> child;
-	//child.push_back(new Tour(0.0));
 	Tour *child = new Tour(0.0);
 
 	/* Here's how we use rand again.  We invoke the rand() function, and since
@@ -324,13 +304,10 @@ Tour * crossover(vector<Tour*> parents)
 	modulus operator */
 	int boundary_index = rand() % CITIES_IN_TOUR;
 
-	/* Sets the index of the mixed result to 0.0 */
-	//child->fitness = 0.0;
 
 	/* Copies the first 'boundary_index' cities in order from parent 1 to the mixed
 	result */
 	for (i = 0; i < boundary_index; i++) {
-		//child->permutation[i] = parents[i]->permutation[i];
 		child->permutation.push_back(parents[0]->permutation[i]);
 	}
 
@@ -341,7 +318,6 @@ Tour * crossover(vector<Tour*> parents)
 			if (!contains_city(child, boundary_index, ((parents[1])->permutation[i]))) {
 
 				/* ...then we add it from the second parent to the child... */
-				//child->permutation[boundary_index] = (parents[1])->permutation[i];
 				child->permutation.push_back(parents[1]->permutation[i]);
 
 				/* And increment the boundary_index */
