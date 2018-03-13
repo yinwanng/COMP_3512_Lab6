@@ -27,6 +27,9 @@ double get_distance_between_cities(City *a, City *b);
 
 vector<Tour*> select_parents(vector<Tour*> population);
 Tour * crossover(vector<Tour*> parents);
+
+Tour * crossover(vector<Tour*> parents);
+int contains_city(Tour * candidate_tour, int length, City * candidate_city);
 int main()
 {
 	/* Variables */
@@ -43,7 +46,7 @@ int main()
 	vector<Tour*> crosses;
 	vector<Tour*> parents;
 	//vector<Tour*> child;
-	Tour * child;
+	//Tour * child;
 
 
 
@@ -111,8 +114,8 @@ int main()
 		*/
 		for (j = 0; j < (POPULATION_SIZE - NUMBER_OF_ELITES); ++j) {
 			parents = select_parents(population);
-			child = crossover(parents);
-			crosses[j] = child;
+			//child = crossover(parents);
+			//crosses[j] = child;
 			//child.clear();
 			parents.clear();
 		}
@@ -247,16 +250,18 @@ vector<Tour*> select_parents(vector<Tour*> population)
 	//struct tour * parent_pool = (struct tour *) malloc(sizeof(struct tour) * PARENT_POOL_SIZE);
 	vector<Tour*> parents;
 	vector<Tour*> parent_pool;
-	
+
 
 
 	for (i = 0; i < NUMBER_OF_PARENTS; ++i) {
 		for (j = 0; j < PARENT_POOL_SIZE; ++j) {
 			k = rand() % POPULATION_SIZE;
-			(parent_pool[j]) = population[k];
+			//parent_pool[j] = population[k];
+			parent_pool.push_back(population[k]);
 		}
 		parent_index = determine_fitness(parent_pool, PARENT_POOL_SIZE);
-		parents[i] = parent_pool[parent_index];
+		//parents[i] = parent_pool[parent_index];
+		parents.push_back(parent_pool[parent_index]);
 	}
 	//free(parent_pool);
 	parent_pool.clear();
@@ -312,7 +317,7 @@ Tour * crossover(vector<Tour*> parents)
 	while (boundary_index < CITIES_IN_TOUR) {
 		for (i = 0; i < CITIES_IN_TOUR; ++i) {
 			/* If the mixed tour doesn't already contain the city at that index in parent two... */
-			if (!contains_city(child, boundary_index, &((parents[1])->permutation[i]))) {
+			if (!contains_city(child, boundary_index, ((parents[1])->permutation[i]))) {
 
 				/* ...then we add it from the second parent to the child... */
 				child->permutation[boundary_index] = (parents[1])->permutation[i];
@@ -324,4 +329,28 @@ Tour * crossover(vector<Tour*> parents)
 	}
 
 	return child;
+}
+
+/*
+* Returns 1 if the specified tour contains the specified city, else 0.
+* PARAM:  pointer to a candidate_tour
+* PARAM:  length of the candidate tour
+* PARAM:  struct city, the city being sought
+* PRE:    NULL
+* POST:   NULL
+* RETURN: IF candidate_tour CONTAINS city_name
+*         THEN 1
+*         ELSE 0
+*/
+int contains_city(Tour * candidate_tour, int length, City * candidate_city)
+{
+	int i = 0;
+	for (i = 0; i < length; ++i) {
+		if (candidate_tour->permutation[i]->getName() == (char)candidate_city->getName() &&
+			candidate_tour->permutation[i]->get_X() == (int)candidate_city->get_X() &&
+			candidate_tour->permutation[i]->get_Y() == (int)candidate_city->get_Y()) { // <------------
+			return 1;
+		}
+	}
+	return 0;
 }
