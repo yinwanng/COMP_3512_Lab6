@@ -46,7 +46,7 @@ int main()
 	vector<Tour*> crosses;
 	vector<Tour*> parents;
 	//vector<Tour*> child;
-	//Tour * child;
+	Tour * child;
 
 
 
@@ -114,7 +114,7 @@ int main()
 		*/
 		for (j = 0; j < (POPULATION_SIZE - NUMBER_OF_ELITES); ++j) {
 			parents = select_parents(population);
-			//child = crossover(parents);
+			child = crossover(parents);
 			//crosses[j] = child;
 			//child.clear();
 			parents.clear();
@@ -310,7 +310,8 @@ Tour * crossover(vector<Tour*> parents)
 	/* Copies the first 'boundary_index' cities in order from parent 1 to the mixed
 	result */
 	for (i = 0; i < boundary_index; i++) {
-		child->permutation[i] = parents[i]->permutation[i];
+		//child->permutation[i] = parents[i]->permutation[i];
+		child->permutation.push_back(parents[0]->permutation[i]);
 	}
 
 	/* Fills the rest of the cells with cities from parent 2 */
@@ -320,7 +321,8 @@ Tour * crossover(vector<Tour*> parents)
 			if (!contains_city(child, boundary_index, ((parents[1])->permutation[i]))) {
 
 				/* ...then we add it from the second parent to the child... */
-				child->permutation[boundary_index] = (parents[1])->permutation[i];
+				//child->permutation[boundary_index] = (parents[1])->permutation[i];
+				child->permutation.push_back(parents[1]->permutation[i]);
 
 				/* And increment the boundary_index */
 				boundary_index++;
